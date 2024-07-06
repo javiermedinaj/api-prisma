@@ -1,0 +1,35 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(uuid())
+  userName  String    @unique
+  password  String
+  createdAt DateTime  @default(now())
+  // forma de relacionar el modelo User con el modelo Product
+  products   Product[]
+}
+
+//para crear una relacion entre dos modelos de forma dinámica se debe agregar un campo en el modelo que se quiere relacionar y luego se debe agregar un campo en el modelo que se quiere relacionar a través de ese campo
+// use npx prisma format to format your schema 
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  belongsToId String
+  // forma de relacionar el modelo Product con el modelo User
+  belongsTo   User     @relation(fields: [belongsToId], references: [id])
+  createdAt   DateTime @default(now())
+}
