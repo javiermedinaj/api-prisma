@@ -1,5 +1,5 @@
-import app from './server.js'
+import app from './server'
 
-app.listen(3001 , ()=>{
-    console.log("Server running on port 3001")
+app.listen(3001, () => {
+  console.log('hello on http://localhost:3001')
 })

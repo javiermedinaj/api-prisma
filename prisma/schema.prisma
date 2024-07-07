@@ -14,22 +14,59 @@ datasource db {
 }
 
 model User {
+  //uuid es un identificador unico para el modelo 
   id        String    @id @default(uuid())
   userName  String    @unique
   password  String
   createdAt DateTime  @default(now())
   // forma de relacionar el modelo User con el modelo Product
-  products   Product[]
+  products  Product[]
 }
 
 //para crear una relacion entre dos modelos de forma dinámica se debe agregar un campo en el modelo que se quiere relacionar y luego se debe agregar un campo en el modelo que se quiere relacionar a través de ese campo
 // use npx prisma format to format your schema 
 
 model Product {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   name        String
   belongsToId String
   // forma de relacionar el modelo Product con el modelo User
   belongsTo   User     @relation(fields: [belongsToId], references: [id])
   createdAt   DateTime @default(now())
+  //update es la relacion que se creo en el modelo Update
+  updates     Update[]
+}
+
+//enum is used to define a set of values that can be used for a field
+enum UPDATE_STATUS {
+  IN_PROGRESS
+  SHIPPED
+  DEPRECATED
+}
+
+model Update {
+  id        String        @id @default(uuid())
+  title     String
+  body      String
+  createdAt DateTime      @default(now())
+  updatedAt DateTime
+  status    UPDATE_STATUS @default(IN_PROGRESS)
+  //version is optional
+  version   String?
+  asset     String?
+
+  productId   String
+  product     Product       @relation(fields: [productId], references: [id])
+  updatePoints UpdatePoint[]
+}
+
+model UpdatePoint {
+  id          String   @id @default(uuid())
+  name        String   @db.VarChar(255)
+  description String
+  createdAt   DateTime @default(now())
+  updateAt    DateTime
+
+  updateId String
+  update   Update @relation(fields: [updateId], references: [id])
 }
